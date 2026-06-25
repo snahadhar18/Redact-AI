@@ -4,16 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pii-scrub-stream"
-version = "0.1.0"
-description = "A production-ready CLI tool that streams text/log files and redacts sensitive information (PII)."
+version = "0.2.0"
+description = "PII scrubbing CLI plus RAG Guardian -- pluggable AI security gateway infrastructure."
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
     { name = "snahadhar18" },
     { name = "Prakhar SHUKLA", email = "pss317@uowmail.edu.au" },
 ]
-keywords = ["pii", "redaction", "security", "logs", "cli", "privacy", "gdpr"]
+keywords = ["pii", "redaction", "security", "logs", "cli", "privacy", "gdpr", "rag", "gateway"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
@@ -21,21 +21,40 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Security",
     "Topic :: Utilities",
 ]
-dependencies = ["click>=8.1"]
+dependencies = [
+    "click>=8.1",
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+]
 
 [project.optional-dependencies]
+api = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "python-multipart>=0.0.9",
+]
+json = ["ijson>=3.2"]
+scale = [
+    "redis>=5.0",
+    "kafka-python>=2.0",
+    "pika>=1.3",
+]
 dev = [
     "pytest>=7.4",
     "pytest-cov>=4.1",
+    "pytest-asyncio>=0.23",
     "ruff>=0.5",
     "mypy>=1.10",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "python-multipart>=0.0.9",
+    "httpx>=0.27",
 ]
 
 [project.urls]
@@ -45,25 +64,35 @@ Issues = "https://github.com/snahadhar18/pii-scrub-stream/issues"
 
 [project.scripts]
 pii-scrub = "pii_scrub_stream.cli.main:cli"
+rag-guardian = "rag_guardian.cli.main:cli"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["src", "."]
+include = ["pii_scrub_stream*", "rag_guardian*"]
 
 [tool.setuptools.package-data]
 pii_scrub_stream = ["py.typed"]
+rag_guardian = ["py.typed"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "rag_guardian/tests"]
 addopts = "-ra"
+asyncio_mode = "auto"
 
 [tool.ruff]
 line-length = 100
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
 
+[tool.ruff.lint.per-file-ignores]
+# FastAPI's dependency-injection idiom relies on calls in argument defaults.
+"rag_guardian/api/app.py" = ["B008"]
+# Intentional no-op lifecycle hooks subclasses may override.
+"rag_guardian/ingestion/base.py" = ["B027"]
+
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 strict = true
 warn_unused_ignores = true

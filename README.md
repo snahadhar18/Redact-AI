@@ -23,6 +23,26 @@ parallel with a thread pool.
   masking (`****`, optionally keeping the last N characters).
 - **Clean Click CLI** with `scrub`, `batch`, and `detectors` commands.
 
+## RAG Guardian — infrastructure gateway
+
+This repository also includes **RAG Guardian** (`rag_guardian/`), an
+enterprise-grade AI security gateway that provides the *infrastructure* around
+detection — file/CSV/JSON ingestion, a concurrent processing engine, real-time
+streaming, a FastAPI service, observability, Docker, CI/CD and a horizontal
+scaling layer — all built around a single pluggable detector contract. It ships
+**no detection logic**; detectors are external plugins.
+
+```bash
+pip install -e ".[api,json]"
+rag-guardian detectors                       # list registered plugins
+tail -f app.log | rag-guardian stream        # real-time redacting filter
+rag-guardian serve --port 8000               # POST /scan /stream /ingest, GET /health /metrics
+```
+
+See [`rag_guardian/docs/README.md`](rag_guardian/docs/README.md),
+[`architecture.md`](rag_guardian/docs/architecture.md), and
+[`scalability.md`](rag_guardian/docs/scalability.md).
+
 ## Built-in Detectors
 
 | Detector | Label | Confidence | What it catches |
