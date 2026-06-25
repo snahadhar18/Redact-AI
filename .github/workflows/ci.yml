@@ -24,9 +24,9 @@ jobs:
           python-version: "3.12"
       - run: pip install --upgrade pip && pip install -e ".[dev]"
       - name: ruff check
-        run: ruff check rag_guardian benchmarks
+        run: ruff check src tests
       - name: ruff format --check
-        run: ruff format --check rag_guardian benchmarks
+        run: ruff format --check src tests
 
   typecheck:
     name: Type check (mypy)
@@ -38,7 +38,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install --upgrade pip && pip install -e ".[dev]"
-      - run: mypy rag_guardian
+      - run: mypy src
 
   test:
     name: Test (py${{ matrix.python-version }})
@@ -55,8 +55,8 @@ jobs:
       - run: pip install --upgrade pip && pip install -e ".[dev]"
       - name: Run tests with coverage
         run: |
-          pytest rag_guardian/tests \
-            --cov=rag_guardian \
+          pytest tests \
+            --cov=src/redactai \
             --cov-report=term-missing \
             --cov-report=xml \
             --cov-fail-under=80
@@ -81,12 +81,12 @@ jobs:
           target: runtime
           push: false
           load: true
-          tags: rag-guardian:ci
+          tags: redactai:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Smoke test the image
         run: |
-          docker run -d --name rg -p 8000:8000 rag-guardian:ci
+          docker run -d --name rg -p 8000:8000 redactai:ci
           for i in $(seq 1 20); do
             if curl -fs http://127.0.0.1:8000/health > /dev/null; then
               echo "health OK"; break
