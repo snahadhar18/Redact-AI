@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import List, Pattern
+from dataclasses import dataclass, field
+from typing import List, Optional, Pattern
 
 
 @dataclass(frozen=True)
@@ -23,20 +23,37 @@ class Match:
         end: Index just past the last character of the match (exclusive).
         value: The raw matched substring.
         label: Machine-readable category, e.g. ``"EMAIL"`` or ``"SSN"``.
+        confidence: Float between 0.0 and 1.0 indicating detection confidence.
+        replacement: Suggested redaction placeholder, e.g. ``"[EMAIL_REDACTED]"``.
     """
 
     start: int
     end: int
     value: str
     label: str
+    confidence: float = 1.0
+    replacement: str = "[REDACTED]"
 
     def __post_init__(self) -> None:
         if self.start < 0 or self.end < self.start:
             raise ValueError(f"Invalid match span: start={self.start}, end={self.end}")
+        if not 0.0 <= self.confidence <= 1.0:
+            raise ValueError(f"Confidence must be between 0.0 and 1.0, got {self.confidence}")
 
     @property
     def length(self) -> int:
         return self.end - self.start
+
+    def to_dict(self) -> dict:
+        """Serialize the match to a dictionary (useful for JSON output)."""
+        return {
+            "match": self.value,
+            "type": self.label,
+            "start": self.start,
+            "end": self.end,
+            "confidence": self.confidence,
+            "replacement": self.replacement,
+        }
 
 
 class Detector(ABC):
@@ -48,6 +65,9 @@ class Detector(ABC):
     #: Machine-readable category reported on every :class:`Match`.
     label: str = "GENERIC"
 
+    #: Default confidence score for detections.
+    default_confidence: float = 0.95
+
     @abstractmethod
     def detect(self, text: str) -> List[Match]:
         """Return all sensitive spans found in ``text``.
@@ -56,6 +76,11 @@ class Detector(ABC):
         engine can call them concurrently.
         """
         raise NotImplementedError
+
+    @property
+    def replacement_tag(self) -> str:
+        """The placeholder tag used to replace detected values."""
+        return f"[{self.label}_REDACTED]"
 
     def __repr__(self) -> str:  # pragma: no cover - cosmetic
         return f"{type(self).__name__}(label={self.label!r})"
@@ -84,12 +109,30 @@ class RegexDetector(Detector):
         """
         return True
 
+    def get_confidence(self, value: str) -> float:
+        """Return a confidence score for the given matched value.
+
+        Override in subclasses for context-dependent confidence scoring.
+        The default returns :attr:`default_confidence`.
+        """
+        return self.default_confidence
+
     def detect(self, text: str) -> List[Match]:
         matches: List[Match] = []
         for m in self.pattern.finditer(text):
             value = m.group()
             if self.validate(value):
-                matches.append(Match(m.start(), m.end(), value, self.label))
+                confidence = self.get_confidence(value)
+                matches.append(
+                    Match(
+                        start=m.start(),
+                        end=m.end(),
+                        value=value,
+                        label=self.label,
+                        confidence=confidence,
+                        replacement=self.replacement_tag,
+                    )
+                )
         return matches
 
 
