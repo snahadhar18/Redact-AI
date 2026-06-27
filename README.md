@@ -42,24 +42,53 @@ RedactAI was built to solve the AI privacy paradox. It provides an enterprise-gr
 ## Architecture
 
 ```mermaid
+%%{
+  init: {
+    "theme": "base",
+    "themeVariables": {
+      "background": "#0D1117",
+      "primaryTextColor": "#F3F4F6",
+      "lineColor": "#9CA3AF",
+      "fontFamily": "Inter, -apple-system, sans-serif"
+    },
+    "flowchart": {
+      "curve": "basis",
+      "nodeSpacing": 60,
+      "rankSpacing": 80
+    }
+  }
+}%%
 graph TD
-    subgraph Data Sources
+    %% Global Styling
+    classDef inputLayer fill:#1F2937,stroke:#60A5FA,stroke-width:2px,color:#FFFFFF,rx:12px,ry:12px;
+    classDef gatewayLayer fill:#1B263B,stroke:#3B82F6,stroke-width:2px,color:#FFFFFF,rx:12px,ry:12px;
+    classDef intelligenceLayer fill:#23272F,stroke:#8B5CF6,stroke-width:2px,color:#FFFFFF,rx:12px,ry:12px;
+    classDef detectorLayer fill:#20242D,stroke:#A855F7,stroke-width:2px,color:#FFFFFF,rx:12px,ry:12px;
+    classDef destinationLayer fill:#1B2B1F,stroke:#22C55E,stroke-width:2px,color:#FFFFFF,rx:12px,ry:12px;
+
+    style DataSources fill:none,stroke:#60A5FA,stroke-width:1px,stroke-dasharray: 5 5,color:#FFFFFF
+    style RedactAIGateway fill:none,stroke:#3B82F6,stroke-width:1px,stroke-dasharray: 5 5,color:#FFFFFF
+    style IntelligenceEngine fill:none,stroke:#8B5CF6,stroke-width:1px,stroke-dasharray: 5 5,color:#FFFFFF
+    style Detectors fill:none,stroke:#A855F7,stroke-width:1px,stroke-dasharray: 5 5,color:#FFFFFF
+    style Destinations fill:none,stroke:#22C55E,stroke-width:1px,stroke-dasharray: 5 5,color:#FFFFFF
+
+    subgraph DataSources [Data Sources]
+        APIRequests[REST API Requests]
         Logs[Log Streams]
         Files[CSV / JSON / Text Files]
-        APIRequests[REST API Requests]
     end
 
-    subgraph RedactAI Gateway
+    subgraph RedactAIGateway [RedactAI Gateway]
         FastAPI[FastAPI Service]
         CLI[Click CLI]
         Ingest[Ingestion Engine]
     end
 
-    subgraph Intelligence Engine
+    subgraph IntelligenceEngine [Intelligence Engine]
         Queue[Bounded Task Queue]
         Workers[ThreadPool Workers]
         
-        subgraph Detectors
+        subgraph Detectors [Detectors]
             Regex[Regex Detectors]
             ML[Presidio / spaCy NLP]
             Entropy[Entropy Analyzers]
@@ -67,15 +96,16 @@ graph TD
         end
     end
 
-    subgraph Destinations
+    subgraph Destinations [Destinations]
         VectorDB[(Vector Database)]
         LLM[LLM Context Window]
         Storage[Secure Storage / S3]
     end
 
+    %% Connections
+    APIRequests --> FastAPI
     Logs --> CLI
     Files --> Ingest
-    APIRequests --> FastAPI
 
     FastAPI --> Queue
     CLI --> Queue
@@ -88,13 +118,12 @@ graph TD
     Detectors --> LLM
     Detectors --> Storage
 
-    classDef source fill:#e3f2fd,stroke:#1e88e5,stroke-width:2px;
-    classDef engine fill:#f3e5f5,stroke:#8e24aa,stroke-width:2px;
-    classDef dest fill:#e8f5e9,stroke:#43a047,stroke-width:2px;
-    
-    class Logs,Files,APIRequests source;
-    class Queue,Workers,Regex,ML,Entropy,Compliance engine;
-    class VectorDB,LLM,Storage dest;
+    %% Apply Classes
+    class APIRequests,Logs,Files inputLayer;
+    class FastAPI,CLI,Ingest gatewayLayer;
+    class Queue,Workers intelligenceLayer;
+    class Regex,ML,Entropy,Compliance detectorLayer;
+    class VectorDB,LLM,Storage destinationLayer;
 ```
 
 ## Project Structure

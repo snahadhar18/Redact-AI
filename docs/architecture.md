@@ -5,20 +5,45 @@ RedactAI is built in two distinct layers: the **Intelligence Engine** and the **
 ## 1. High-Level System Overview
 
 ```mermaid
+%%{
+  init: {
+    "theme": "base",
+    "themeVariables": {
+      "background": "#0D1117",
+      "primaryTextColor": "#F3F4F6",
+      "lineColor": "#9CA3AF",
+      "fontFamily": "Inter, -apple-system, sans-serif"
+    },
+    "flowchart": {
+      "curve": "basis",
+      "nodeSpacing": 60,
+      "rankSpacing": 80
+    }
+  }
+}%%
 graph TD
+    classDef inputLayer fill:#1F2937,stroke:#60A5FA,stroke-width:2px,color:#FFFFFF,rx:12px,ry:12px;
+    classDef gatewayLayer fill:#1B263B,stroke:#3B82F6,stroke-width:2px,color:#FFFFFF,rx:12px,ry:12px;
+    classDef intelligenceLayer fill:#23272F,stroke:#8B5CF6,stroke-width:2px,color:#FFFFFF,rx:12px,ry:12px;
+    classDef detectorLayer fill:#20242D,stroke:#A855F7,stroke-width:2px,color:#FFFFFF,rx:12px,ry:12px;
+    
+    style RedactAIGateway fill:none,stroke:#3B82F6,stroke-width:1px,stroke-dasharray: 5 5,color:#FFFFFF
+    style IntelligenceEngine fill:none,stroke:#8B5CF6,stroke-width:1px,stroke-dasharray: 5 5,color:#FFFFFF
+    style Registry fill:none,stroke:#A855F7,stroke-width:1px,stroke-dasharray: 5 5,color:#FFFFFF
+
     Client[Client Applications]
     Logs[Log Streams]
     
-    subgraph RedactAI Gateway
+    subgraph RedactAIGateway [RedactAI Gateway]
         API[FastAPI Service]
         Stream[Streaming Processor]
         CLI[Click CLI]
     end
     
-    subgraph Intelligence Engine
+    subgraph IntelligenceEngine [Intelligence Engine]
         Pool[ThreadPoolExecutor]
         
-        subgraph Registry
+        subgraph Registry [Registry]
             Regex[Regex Detectors]
             ML[NLP Detectors]
             Entropy[Entropy Detectors]
@@ -36,6 +61,11 @@ graph TD
     
     Pool --> Scrubber
     Scrubber --> Registry
+
+    class Client,Logs inputLayer;
+    class API,Stream,CLI gatewayLayer;
+    class Pool,Scrubber intelligenceLayer;
+    class Regex,ML,Entropy detectorLayer;
 ```
 
 ## 2. Module Responsibilities
