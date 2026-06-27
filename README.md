@@ -254,7 +254,7 @@ Please review our [Security Policy](SECURITY.md) for information on reporting vu
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ## Authors
-- **snahadhar18** — Creator and Maintainer
+- **snahadhar18** — Author
 - **Prakhar SHUKLA** — Co-Author
 
 ## Acknowledgements
