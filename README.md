@@ -1,4 +1,4 @@
-# redactai
+# Redactai
 
 A production-ready CLI tool that **streams** text and log files and **redacts
 sensitive information** (PII) — emails, phone numbers, IP addresses, credit
