@@ -227,8 +227,8 @@ should ship with unit tests and be added to the `REGISTRY`.
 
 ## Authors
 
-- **snahadhar18** — creator and maintainer
-- **Prakhar SHUKLA** (pss317@uowmail.edu.au) — co-author
+- **snahadhar18** — author
+- **Prakhar SHUKLA**  — co-author
 
 ## License
 
