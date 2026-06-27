@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/logo.png" alt="RedactAI Logo" width="300"/>
+  <img src="docs/assets/logo.jpg" alt="RedactAI Logo" width="300"/>
 
   # RedactAI
 
