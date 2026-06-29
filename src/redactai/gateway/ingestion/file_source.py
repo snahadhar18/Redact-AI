@@ -55,7 +55,8 @@ class FileSource(BaseIngestionSource):
         owns = self._fh is None
         if owns:
             self.open()
-        assert self._fh is not None
+        if self._fh is None:
+            raise RuntimeError("File not open")
         try:
             for line_no, raw in enumerate(self._fh, start=1):
                 content = raw.rstrip("\r\n") if self.strip_newlines else raw

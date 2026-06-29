@@ -1,4 +1,3 @@
-# mypy: ignore-errors
 """Detector plugin registry -- where external detection logic plugs in.
 
 Detectors are *never* hardcoded. They are registered here, either:
@@ -95,10 +94,7 @@ class DetectorRegistry:
         from importlib import metadata
 
         loaded = 0
-        try:
-            entry_points = metadata.entry_points(group=group)
-        except TypeError:  # pragma: no cover - Python < 3.10 fallback
-            entry_points = metadata.entry_points().get(group, [])  # type: ignore[attr-defined]
+        entry_points = metadata.entry_points(group=group)
         for ep in entry_points:
             try:
                 factory = ep.load()
@@ -118,7 +114,7 @@ try:
     from redactai.gateway.core.detector import DetectionSpan, DetectorProtocol
 
     class _EngineAdapter(DetectorProtocol):
-        def __init__(self, engine_cls):
+        def __init__(self, engine_cls: type) -> None:
             self._detector = engine_cls()
 
         def detect(self, text: str) -> list[DetectionSpan]:
@@ -137,7 +133,7 @@ try:
 
     for _name, _cls in ENGINE_REGISTRY.items():
         # Register a factory that returns the adapted engine detector
-        def _factory(c=_cls):
+        def _factory(c: type = _cls) -> DetectorProtocol:
             return _EngineAdapter(c)
         global_registry.register(_name, _factory, replace=True)
 except ImportError:

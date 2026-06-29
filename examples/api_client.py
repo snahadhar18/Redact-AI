@@ -1,11 +1,19 @@
 """
 API Client Example.
 Demonstrates how to send requests to the RedactAI Gateway API.
-Ensure the API is running first: `redactai-gateway serve --port 8000`
+Ensure the API is running first: `redactai serve --port 8000`
 """
 import urllib.request
 import urllib.error
 import json
+
+try:
+    from redactai.gateway.api.schemas import ScanRequest
+except ImportError:
+    # Development fallback
+    import sys, os
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+    from redactai.gateway.api.schemas import ScanRequest
 
 def main() -> None:
     url = "http://localhost:8000/scan"

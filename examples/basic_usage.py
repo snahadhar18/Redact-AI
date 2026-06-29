@@ -2,9 +2,18 @@
 Basic Usage Example for RedactAI Engine.
 This demonstrates how to instantiate the engine and scan a simple string.
 """
-from redactai.gateway.config.settings import get_settings
-from redactai.gateway.core.container import Container
-from redactai.gateway.core.models import Record
+try:
+    from redactai.gateway.config.settings import get_settings
+    from redactai.gateway.core.container import Container
+    from redactai.gateway.core.models import Record
+except ImportError:
+    # Development fallback: allows running this script directly from the repository
+    # without `pip install -e .`
+    import sys, os
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+    from redactai.gateway.config.settings import get_settings
+    from redactai.gateway.core.container import Container
+    from redactai.gateway.core.models import Record
 
 def main() -> None:
     # 1. Initialize the engine via container

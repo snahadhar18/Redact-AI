@@ -1,4 +1,3 @@
-# mypy: ignore-errors
 """Risk Scoring Engine for RedactAI."""
 
 from dataclasses import dataclass
@@ -14,7 +13,8 @@ class RiskAssessment:
     risk_level: str  # SAFE, LOW, MEDIUM, HIGH, CRITICAL
     factors: list[str]  # Explanations for the score
 
-    def to_dict(self) -> dict:
+    from typing import Any
+    def to_dict(self) -> dict[str, Any]:
         return {
             "score": round(self.score, 2),
             "risk_level": self.risk_level,

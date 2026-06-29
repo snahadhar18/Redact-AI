@@ -64,7 +64,8 @@ class CSVSource(BaseIngestionSource):
         owns = self._fh is None
         if owns:
             self.open()
-        assert self._fh is not None
+        if self._fh is None:
+            raise RuntimeError("File not open")
         try:
             reader = csv.reader(self._fh, delimiter=self.settings.csv_delimiter)
             header: list[str] | None = None

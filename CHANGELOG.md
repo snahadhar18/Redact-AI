@@ -30,4 +30,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented streaming file and stdin processors.
 - 10 built-in detectors: Email, Phone, IPv4/IPv6, Credit Card, SSN, JWT, AWS Keys, OpenAI Keys, and Generic API Keys.
 - Concurrent file scrubbing powered by `ThreadPoolExecutor`.
-- Initial `rag_guardian` gateway featuring FastAPI `/scan` and `/stream` endpoints.
+- Initial gateway featuring FastAPI `/scan` and `/stream` endpoints.

@@ -1,4 +1,3 @@
-# mypy: ignore-errors
 """Compliance Engine for RedactAI."""
 
 from dataclasses import dataclass, field
@@ -26,7 +25,8 @@ class ComplianceReport:
     high_findings: int
     findings: list[Finding] = field(default_factory=list)
 
-    def to_dict(self) -> dict:
+    from typing import Any
+    def to_dict(self) -> dict[str, Any]:
         return {
             "total_findings": self.total_findings,
             "regulations_triggered": list(self.regulations_triggered),

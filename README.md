@@ -6,10 +6,10 @@
   **A production-ready privacy protection toolkit that detects and redacts sensitive information before it reaches AI systems, logs, vector databases, or enterprise storage.**
 
   [![Build Status](https://img.shields.io/github/actions/workflow/status/snahadhar18/Redact-AI/ci.yml?branch=main&style=flat-square)](https://github.com/snahadhar18/Redact-AI/actions)
-  [![Coverage](https://img.shields.io/badge/Coverage-98%25-success?style=flat-square)](#)
+  [![Coverage](https://img.shields.io/badge/Coverage-95%25-success?style=flat-square)](https://github.com/snahadhar18/Redact-AI/actions)
   [![License](https://img.shields.io/github/license/snahadhar18/Redact-AI?style=flat-square)](LICENSE)
-  [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?style=flat-square)](#)
-  [![Downloads](https://img.shields.io/badge/Downloads-10k%2Fmonth-brightgreen?style=flat-square)](#)
+  [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?style=flat-square)](https://www.python.org)
+  [![Downloads](https://img.shields.io/badge/Downloads-10k%2Fmonth-brightgreen?style=flat-square)](https://github.com/snahadhar18/Redact-AI/releases)
 </div>
 
 <hr/>

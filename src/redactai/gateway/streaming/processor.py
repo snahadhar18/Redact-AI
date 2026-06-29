@@ -193,6 +193,10 @@ class ProcessingEngine:
                     logger.exception("record %s failed after %d attempts", record.id, attempt)
                     # Fail open: emit an empty result so the stream continues.
                     return ScanResult(record_id=record.id, source=record.source)
+                logger.warning(
+                    "record %s processing failed, retrying (attempt %d/%d)",
+                    record.id, attempt, self.max_retries, exc_info=True
+                )
                 self.metrics.increment("rg_records_retried")
 
 

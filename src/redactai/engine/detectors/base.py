@@ -1,4 +1,3 @@
-# mypy: ignore-errors
 """Core detector interface and reusable base classes.
 
 A :class:`Detector` inspects a chunk of text and reports the spans that
@@ -46,7 +45,8 @@ class Match:
     def length(self) -> int:
         return self.end - self.start
 
-    def to_dict(self) -> dict:
+    from typing import Any
+    def to_dict(self) -> dict[str, Any]:
         """Serialize the match to a dictionary (useful for JSON output)."""
         return {
             "match": self.value,

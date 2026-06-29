@@ -62,7 +62,8 @@ class JSONSource(BaseIngestionSource):
         owns = self._fh is None
         if owns:
             self.open()
-        assert self._fh is not None
+        if self._fh is None:
+            raise RuntimeError("File not open")
         try:
             if self.json_lines:
                 yield from self._read_lines()
@@ -73,7 +74,8 @@ class JSONSource(BaseIngestionSource):
                 self.close()
 
     def _read_lines(self) -> Iterator[Record]:
-        assert self._fh is not None
+        if self._fh is None:
+            raise RuntimeError("File not open")
         for line_no, raw in enumerate(self._fh, start=1):
             line = raw.strip()
             if not line:
@@ -87,7 +89,8 @@ class JSONSource(BaseIngestionSource):
             yield self._to_record(value, line_no)
 
     def _read_array(self) -> Iterator[Record]:
-        assert self._fh is not None
+        if self._fh is None:
+            raise RuntimeError("File not open")
         try:  # streaming path
             import ijson  # type: ignore
 

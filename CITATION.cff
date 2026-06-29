@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+title: "RedactAI"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - given-names: "RedactAI Contributors"
+repository-code: "https://github.com/redactai/redactai"
+url: "https://github.com/redactai/redactai"
+license: "MIT"
+version: "1.0.0"
+date-released: "2026-06-27"
+abstract: >-
+  RedactAI is a high-performance, pluggable PII detection and redaction engine
+  designed to operate securely inside enterprise environments.

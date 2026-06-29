@@ -82,6 +82,10 @@ redactai = ["py.typed"]
 testpaths = ["tests"]
 addopts = "-ra"
 asyncio_mode = "auto"
+filterwarnings = [
+    "ignore:.*starlette.testclient.*:DeprecationWarning",
+    "ignore:.*split_arg_string.*:DeprecationWarning"
+]
 
 [tool.ruff]
 line-length = 100
@@ -100,3 +104,9 @@ select = ["E", "F", "I", "B", "UP", "SIM"]
 python_version = "3.10"
 strict = true
 warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+disallow_incomplete_defs = false

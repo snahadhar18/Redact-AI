@@ -1,25 +1,8 @@
-"""Redaction engine and strategies."""
+import warnings
 
-from __future__ import annotations
-
-from redactai.engine.scrubber.engine import (
-    FileResult,
-    RedactionEngine,
-    resolve_overlaps,
+warnings.warn(
+    "The redactai.engine.scrubber module is deprecated and will be removed in a future release. "
+    "Please use redactai.gateway.core instead.",
+    DeprecationWarning,
+    stacklevel=2,
 )
-from redactai.engine.scrubber.redaction import (
-    Redactor,
-    fixed_redactor,
-    label_redactor,
-    make_mask_redactor,
-)
-
-__all__ = [
-    "FileResult",
-    "RedactionEngine",
-    "resolve_overlaps",
-    "Redactor",
-    "fixed_redactor",
-    "label_redactor",
-    "make_mask_redactor",
-]

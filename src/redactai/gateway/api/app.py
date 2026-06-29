@@ -1,4 +1,3 @@
-# mypy: ignore-errors
 """FastAPI application factory and route definitions.
 
 Endpoints:
@@ -18,9 +17,10 @@ from __future__ import annotations
 
 import json
 import tempfile
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Mapping
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Any
 
 from fastapi import Depends, FastAPI, File, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -179,12 +179,12 @@ def _register_routes(app: FastAPI) -> None:
             status=report.status.value, version=report.version, checks=report.checks
         )
 
-    @app.get("/metrics", tags=["ops"])
+    @app.get("/metrics", tags=["ops"], response_model=None)
     async def get_metrics_endpoint(
         request: Request,
         fmt: str = Query(default="prometheus", pattern="^(prometheus|json)$"),
         registry: MetricsRegistry = Depends(get_metrics),
-    ):  # type: ignore[no-untyped-def]
+    ) -> PlainTextResponse | Mapping[str, Any]:
         """Expose metrics as Prometheus text (default) or JSON."""
         if fmt == "json":
             return registry.snapshot()
@@ -193,7 +193,7 @@ def _register_routes(app: FastAPI) -> None:
 
 def _label_counts(labels: tuple[str, ...], result: object) -> dict[str, int]:
     counts: dict[str, int] = {}
-    for span in getattr(result, "spans", ()):  # type: ignore[attr-defined]
+    for span in getattr(result, "spans", ()):
         counts[span.label] = counts.get(span.label, 0) + 1
     return counts
 

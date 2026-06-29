@@ -26,9 +26,27 @@ def test_metrics_counters_gauges_histograms() -> None:
 def test_metrics_prometheus_render() -> None:
     m = MetricsRegistry()
     m.increment("rg_records_processed", 5)
+    m.set_gauge("queue_depth", 10)
+    m.observe("latency", 50.0)
     text = m.render_prometheus()
     assert "rg_records_processed 5" in text
     assert "# TYPE rg_records_processed counter" in text
+    assert "queue_depth 10" in text
+    assert "# TYPE queue_depth gauge" in text
+    assert "latency_count 1" in text
+    assert "latency_sum 50" in text
+    assert "# TYPE latency summary" in text
+
+
+def test_metrics_reset() -> None:
+    m = MetricsRegistry()
+    m.increment("test", 1)
+    m.set_gauge("gauge", 1)
+    m.observe("hist", 1)
+    m.reset()
+    assert m.counter("test") == 0.0
+    assert m.gauge("gauge") == 0.0
+    assert "hist" not in m.snapshot()["histograms"]
 
 
 def test_timer_records_observation() -> None:

@@ -1,5 +1,4 @@
-# mypy: ignore-errors
-"""``redactai`` command-line entry point.
+"""Command-line interface for the RedactAI gateway.
 
 Commands:
 

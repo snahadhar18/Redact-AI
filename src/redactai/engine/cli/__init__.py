@@ -1,7 +1,8 @@
-"""Command-line interface package."""
+import warnings
 
-from __future__ import annotations
-
-from redactai.engine.cli.main import cli, main
-
-__all__ = ["cli", "main"]
+warnings.warn(
+    "The redactai.engine.cli module is deprecated and will be removed in a future release. "
+    "Please use redactai.gateway.cli instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)

@@ -1,4 +1,3 @@
-# mypy: ignore-errors
 """Generic API key detector.
 
 This is a catch-all detector for API keys, tokens, and secrets that don't
@@ -86,7 +85,7 @@ class GenericAPIKeyDetector(Detector):
 
     def detect(self, text: str) -> list[Match]:
         matches: list[Match] = []
-        seen_spans: set = set()
+        seen_spans: set[tuple[int, int]] = set()
 
         # 1. Prefixed keys from known services (highest confidence generic match)
         for m in _PREFIXED_KEY_RE.finditer(text):

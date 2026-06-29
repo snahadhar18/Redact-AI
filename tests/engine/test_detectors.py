@@ -46,6 +46,71 @@ from redactai.engine.detectors.phone_detector import PhoneDetector
 from redactai.engine.detectors.ssn_detector import SSNDetector
 
 
+def test_cloud_keys_detector():
+    from redactai.engine.detectors.cloud_keys_detector import CloudKeysDetector
+    detector = CloudKeysDetector()
+    matches = detector.detect("GCP key: AIzaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    assert matches
+    assert matches[0].label == "GCP_API_KEY"
+
+def test_secret_detector():
+    from redactai.engine.detectors.secret_detector import SecretDetector
+    detector = SecretDetector()
+    matches = detector.detect("api_secret: 'abcdefghijklmnopqrstuvwxyzABCDE'")
+    assert matches
+    assert matches[0].label == "SECRET"
+
+
+def test_ai_detector(monkeypatch):
+    
+    class MockResult:
+        def __init__(self, entity_type, start, end, score):
+            self.entity_type = entity_type
+            self.start = start
+            self.end = end
+            self.score = score
+
+    class MockAnalyzer:
+        def analyze(self, text, language):
+            if not text:
+                return []
+            return [MockResult("CREDIT_CARD", 0, 4, 0.99), MockResult("PERSON", 5, 9, 0.85)]
+            
+    import redactai.engine.detectors.ai_detector as ai_mod
+    monkeypatch.setattr(ai_mod, "HAS_PRESIDIO", True)
+    monkeypatch.setattr(ai_mod, "AnalyzerEngine", MockAnalyzer)
+    
+    detector = ai_mod.AIDetector()
+    
+    # Test severity mapping
+    assert detector.get_severity("CREDIT_CARD") == "CRITICAL"
+    assert detector.get_severity("NRP") == "HIGH"
+    assert detector.get_severity("PERSON") == "MEDIUM"
+    
+    # Test empty text
+    assert detector.detect("") == []
+    
+    # Test matching
+    matches = detector.detect("1234 John")
+    assert len(matches) == 2
+    assert matches[0].label == "CREDIT_CARD"
+    assert matches[0].severity == "CRITICAL"
+    assert matches[1].label == "PERSON"
+    assert matches[1].severity == "MEDIUM"
+
+def test_password_detector():
+    from redactai.engine.detectors.password_detector import PasswordDetector
+    detector = PasswordDetector()
+    matches = detector.detect("password: 'SuperSecret123!'")
+    assert matches
+    assert matches[0].label == "PASSWORD"
+    assert matches[0].value == "SuperSecret123!"
+
+    # Should not flag low entropy (11111111 has entropy 0)
+    matches2 = detector.detect("password: '11111111'")
+    assert not matches2
+
+
 def _values(detector, text):
     """Extract matched values from a detector run."""
     return [m.value for m in detector.detect(text)]

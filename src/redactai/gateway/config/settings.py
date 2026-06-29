@@ -53,7 +53,7 @@ class IngestionSettings(BaseModel):
 class APISettings(BaseModel):
     """FastAPI server knobs."""
 
-    host: str = "0.0.0.0"
+    host: str = "0.0.0.0"  # nosec B104
     port: int = Field(default=8000, ge=1, le=65535)
     title: str = "RedactAI"
     cors_origins: tuple[str, ...] = ("*",)

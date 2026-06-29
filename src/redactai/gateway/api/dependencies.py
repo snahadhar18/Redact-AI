@@ -1,4 +1,3 @@
-# mypy: ignore-errors
 """FastAPI dependency providers.
 
 These functions bridge FastAPI's ``Depends`` system to our DI
@@ -9,7 +8,7 @@ which is populated once during the lifespan startup.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from fastapi import Request
 
@@ -25,32 +24,32 @@ if TYPE_CHECKING:  # pragma: no cover
 
 def get_container(request: Request) -> Container:
     """Return the application-scoped DI container."""
-    return request.app.state.container
+    return cast(Container, request.app.state.container)
 
 
 def get_scan_service(request: Request) -> ScanService:
     """Return the shared :class:`ScanService`."""
-    return request.app.state.container.scan_service
+    return cast(ScanService, request.app.state.container.scan_service)
 
 
 def get_engine(request: Request) -> ProcessingEngine:
     """Return the shared, already-started processing engine."""
-    return request.app.state.engine
+    return cast("ProcessingEngine", request.app.state.engine)
 
 
 def get_audit_logger(request: Request) -> AuditLogger:
     """Return the shared audit logger."""
-    return request.app.state.audit
+    return cast("AuditLogger", request.app.state.audit)
 
 
 def get_metrics(request: Request) -> MetricsRegistry:
     """Return the shared metrics registry."""
-    return request.app.state.metrics
+    return cast("MetricsRegistry", request.app.state.metrics)
 
 
 def get_health(request: Request) -> HealthCheck:
     """Return the shared health-check registry."""
-    return request.app.state.health
+    return cast("HealthCheck", request.app.state.health)
 
 
 __all__ = [

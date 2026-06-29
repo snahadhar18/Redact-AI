@@ -14,6 +14,11 @@ from __future__ import annotations
 
 import logging
 from functools import cached_property
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from redactai.gateway.ingestion.factory import SourceFactory
+    from redactai.gateway.streaming.processor import ProcessingEngine
 
 from redactai.gateway.config.settings import Settings, get_settings
 from redactai.gateway.core.detector import DetectorProtocol, NullDetector
@@ -67,7 +72,7 @@ class Container:
         """The fully-wired :class:`ScanService`."""
         return ScanService(self.detectors, self.redactor)
 
-    def build_engine(self):  # type: ignore[no-untyped-def]
+    def build_engine(self) -> ProcessingEngine:
         """Create a fresh processing engine bound to this container's service.
 
         Returns a new engine each call (engines own a thread pool and should be
@@ -84,7 +89,7 @@ class Container:
             redact=self.settings.processing.redact_by_default,
         )
 
-    def ingestion_factory(self):  # type: ignore[no-untyped-def]
+    def ingestion_factory(self) -> SourceFactory:
         """Return the ingestion source factory bound to ingestion settings."""
         from redactai.gateway.ingestion.factory import SourceFactory
 

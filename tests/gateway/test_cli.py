@@ -81,15 +81,54 @@ def test_ingest_summary(runner: CliRunner, tmp_path: Path) -> None:
     assert summary["label_counts"]["EMAIL"] == 2
 
 
-@pytest.mark.skip(reason="Click CliRunner sys.stdin mock aborts intermittently on stream command")
-@mock.patch("redactai.gateway.streaming.stream.signal.signal")
-def test_stream_command(mock_signal, runner: CliRunner) -> None:
-    result = runner.invoke(
-        cli,
-        ["stream", "-d", "fake_email"],
-        input="contact a@b.com\nplain\n",
-        catch_exceptions=False,
-    )
-    assert result.exit_code == 0, result.output
-    lines = result.output.splitlines()
+@mock.patch("redactai.gateway.streaming.stream.StreamProcessor._install_signals")
+def test_stream_command(mock_install_signals, monkeypatch: pytest.MonkeyPatch) -> None:
+    import io
+
+    from redactai.gateway.cli.main import stream
+    monkeypatch.setattr("sys.stdin", io.StringIO("contact a@b.com\nplain\n"))
+    out = io.StringIO()
+    monkeypatch.setattr("sys.stdout", out)
+    
+    stream.callback(detectors=("fake_email",), redact=True, workers=None, buffer_size=None)
+    
+    lines = out.getvalue().splitlines()
     assert "contact [EMAIL]" in lines
+
+
+@mock.patch("redactai.gateway.streaming.stream.StreamProcessor._install_signals")
+def test_stream_command_buffer_size(mock_install_signals, monkeypatch: pytest.MonkeyPatch) -> None:
+    import io
+
+    from redactai.gateway.cli.main import stream
+    monkeypatch.setattr("sys.stdin", io.StringIO("test\n"))
+    out = io.StringIO()
+    monkeypatch.setattr("sys.stdout", out)
+    stream.callback(detectors=(), redact=True, workers=None, buffer_size=10)
+    assert out.getvalue() != ""
+    monkeypatch.setattr("sys.stdin", io.StringIO("test\n"))
+    out = io.StringIO()
+    monkeypatch.setattr("sys.stdout", out)
+    stream.callback(detectors=(), redact=True, workers=None, buffer_size=10)
+    assert out.getvalue() != ""
+
+
+def test_serve_command(runner: CliRunner, monkeypatch: pytest.MonkeyPatch) -> None:
+    import sys
+    from types import ModuleType
+    mock_uvicorn = ModuleType("uvicorn")
+    mock_uvicorn.run = mock.Mock() # type: ignore
+    monkeypatch.setitem(sys.modules, "uvicorn", mock_uvicorn)
+    
+    result = runner.invoke(cli, ["serve", "--port", "9090"])
+    assert result.exit_code == 0
+    mock_uvicorn.run.assert_called_once()
+    assert mock_uvicorn.run.call_args[1]["port"] == 9090
+
+
+def test_serve_command_no_uvicorn(runner: CliRunner, monkeypatch: pytest.MonkeyPatch) -> None:
+    import sys
+    monkeypatch.setitem(sys.modules, "uvicorn", None) # type: ignore
+    result = runner.invoke(cli, ["serve"])
+    assert result.exit_code != 0
+    assert "uvicorn is not installed" in result.output

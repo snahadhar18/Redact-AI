@@ -1,4 +1,3 @@
-# mypy: ignore-errors
 """HTTP API layer (FastAPI).
 
 Exposes the gateway over HTTP: synchronous scanning, streaming, file ingestion,
@@ -14,8 +13,18 @@ from __future__ import annotations
 
 __all__ = ["create_app"]
 
+from typing import TYPE_CHECKING
 
-def create_app(*args: object, **kwargs: object):  # type: ignore[no-untyped-def]
+if TYPE_CHECKING:
+    from fastapi import FastAPI
+
+    from redactai.gateway.config.settings import Settings
+    from redactai.gateway.core.container import Container
+
+def create_app(
+    settings: Settings | None = None,
+    container: Container | None = None,
+) -> FastAPI:
     """Lazily import and build the FastAPI application.
 
     Importing here (rather than at module load) keeps ``fastapi`` an optional
@@ -23,4 +32,4 @@ def create_app(*args: object, **kwargs: object):  # type: ignore[no-untyped-def]
     """
     from redactai.gateway.api.app import create_app as _create_app
 
-    return _create_app(*args, **kwargs)
+    return _create_app(settings, container)

@@ -1,5 +1,4 @@
-# mypy: ignore-errors
-"""AI powered PII detector using Microsoft Presidio and spaCy."""
+"""AI-based detectors leveraging NLP models for contextual PII detection. and spaCy."""
 
 import logging
 
@@ -25,7 +24,7 @@ class AIDetector(Detector):
     label = "AI_ENTITY"
     default_severity = "MEDIUM"
 
-    def __init__(self, languages: list[str] = None):
+    def __init__(self, languages: list[str] | None = None):
         if not HAS_PRESIDIO:
             raise ImportError(
                 "Presidio is not installed. Install the AI dependencies with: "

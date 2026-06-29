@@ -95,7 +95,8 @@ class InMemoryBroker:
                 continue
             if item is self._SENTINEL:
                 return
-            assert isinstance(item, Message)
+            if not isinstance(item, Message):
+                raise TypeError("Expected Message")
             yield item
 
     def ack(self, message: Message) -> None:  # noqa: D401 - in-process no-op
