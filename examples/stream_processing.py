@@ -2,20 +2,12 @@
 Stream Processing Example.
 Demonstrates how to use the StreamProcessor for filtering large streams in real time.
 """
-import sys
 from pathlib import Path
-try:
-    from redactai.gateway.core.container import Container
-    from redactai.gateway.core.models import Record
-    from redactai.gateway.streaming.stream import StreamProcessor
-except ImportError:
-    # Development fallback
-    import sys, os
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
-    from redactai.gateway.core.container import Container
-    from redactai.gateway.core.models import Record
-    from redactai.gateway.streaming.stream import StreamProcessor
+
 from redactai.gateway.config.settings import get_settings
+from redactai.gateway.core.container import Container
+from redactai.gateway.streaming.stream import StreamProcessor
+
 
 def main() -> None:
     input_file = Path("examples/sample.log")

@@ -3,19 +3,11 @@ Batch Processing Example.
 Demonstrates how to use the Ingestion Engine to process CSV files.
 """
 from pathlib import Path
-try:
-    from redactai.gateway.core.container import Container
-    from redactai.gateway.core.models import Record
-    from redactai.gateway.config.settings import get_settings
-    from redactai.gateway.ingestion.factory import SourceType
-except ImportError:
-    # Development fallback
-    import sys, os
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
-    from redactai.gateway.core.container import Container
-    from redactai.gateway.core.models import Record
-    from redactai.gateway.config.settings import get_settings
-    from redactai.gateway.ingestion.factory import SourceType
+
+from redactai.gateway.config.settings import get_settings
+from redactai.gateway.core.container import Container
+from redactai.gateway.ingestion.factory import SourceType
+
 
 def main() -> None:
     input_file = Path("examples/sample.csv")

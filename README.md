@@ -169,18 +169,18 @@ pip install -e ".[api,json,ai,scale]"
 
 ### CLI Usage
 
-Redact a single log file locally using the engine:
+Redact a single log file locally using the gateway:
 ```bash
-redactai-engine scrub system.log secure.log --mask --keep-last 4
+redactai-gateway scan system.log -o secure.log --redact
 ```
 
 <div align="center">
   <img src="docs/assets/screenshot_cli.png" alt="CLI Screenshot" width="800"/>
 </div>
 
-Process a directory of logs concurrently using 16 workers:
+Process logs concurrently using 16 workers:
 ```bash
-redactai-engine batch /var/logs/*.log -o /secure_logs/ -w 16
+redactai-gateway ingest /var/logs/system.log -w 16
 ```
 
 Filter a live application stream in real-time using the gateway:

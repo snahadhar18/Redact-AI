@@ -2,18 +2,10 @@
 Basic Usage Example for RedactAI Engine.
 This demonstrates how to instantiate the engine and scan a simple string.
 """
-try:
-    from redactai.gateway.config.settings import get_settings
-    from redactai.gateway.core.container import Container
-    from redactai.gateway.core.models import Record
-except ImportError:
-    # Development fallback: allows running this script directly from the repository
-    # without `pip install -e .`
-    import sys, os
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
-    from redactai.gateway.config.settings import get_settings
-    from redactai.gateway.core.container import Container
-    from redactai.gateway.core.models import Record
+from redactai.gateway.config.settings import get_settings
+from redactai.gateway.core.container import Container
+from redactai.gateway.core.models import Record
+
 
 def main() -> None:
     # 1. Initialize the engine via container
@@ -24,7 +16,10 @@ def main() -> None:
     engine.redact = True
     
     # 2. Text containing sensitive data
-    text = "Please contact me at john.doe@example.com or call +1-555-019-8372. My AWS key is AKIAIOSFODNN7EXAMPLE."
+    text = (
+        "Please contact me at john.doe@example.com or call +1-555-019-8372. "
+        "My AWS key is AKIAIOSFODNN7EXAMPLE."
+    )
     
     # 3. Scan the text (ProcessingEngine takes an iterable of Records)
     records = [Record(content=text, id="record-1")]

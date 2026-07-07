@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 from click.testing import CliRunner
+
+pytestmark = pytest.mark.filterwarnings("ignore::DeprecationWarning")
 
 from redactai.engine.cli.main import cli
 
