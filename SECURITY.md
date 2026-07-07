@@ -17,7 +17,7 @@ Security updates are provided for the following versions:
 
 Please do **NOT** report security vulnerabilities via public GitHub issues, discussions, or pull requests. 
 
-Instead, please report them by emailing **pss317@uowmail.edu.au** or **snahadhar18@users.noreply.github.com** directly. 
+Instead, please report them by emailing **prakharshukl@gmail.com** or **snahadhar18@gmail.com** directly. 
 
 You should receive a response within 48 hours. If the vulnerability is confirmed, we will release a patch as soon as possible and provide credit to the reporter in our security advisory and release notes.
 
